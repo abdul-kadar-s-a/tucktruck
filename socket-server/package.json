@@ -1,0 +1,23 @@
+{
+    "name": "tucktruck-server",
+    "version": "1.0.0",
+    "description": "Socket.IO backend server for TuckTruck real-time platform",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node server.js"
+    },
+    "keywords": [
+        "socket.io",
+        "real-time",
+        "trucking"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.6",
+        "express": "^4.22.1",
+        "socket.io": "^4.8.3"
+    },
+    "type": "commonjs"
+}

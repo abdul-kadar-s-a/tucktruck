@@ -18,7 +18,7 @@ export function SignupCustomer({ onSignup, onBack }: SignupCustomerProps) {
   });
 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
 
@@ -37,16 +37,36 @@ export function SignupCustomer({ onSignup, onBack }: SignupCustomerProps) {
       return;
     }
 
-    // Save to localStorage for persistence
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    localStorage.setItem('users', JSON.stringify([...existingUsers, { ...newUser, password: formData.password }]));
+    try {
+      const { api } = await import('../../services/api');
+      const response = await api.signup({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        address: formData.address,
+        role: 'CUSTOMER'
+      });
 
-    alert('Account created successfully!');
+      const newUser: User = {
+        id: response.id.toString(),
+        name: response.name,
+        email: response.email,
+        phone: response.phone,
+        type: 'customer',
+        address: formData.address,
+        approved: true
+      };
 
-    // Also save current session
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
+      // Also save current session
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
 
-    onSignup(newUser);
+      alert('Account created successfully!');
+      onSignup(newUser);
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      alert(`Signup failed: ${err.message || 'Unknown error'}`);
+    }
   };
 
   return (

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -15,6 +16,17 @@ import java.util.Map;
 public class DriverController {
 
     private final UserRepository userRepository;
+
+    // GET AVAILABLE DRIVERS
+    @GetMapping("/available")
+    public ResponseEntity<List<User>> getAvailableDrivers() {
+        try {
+            List<User> drivers = userRepository.findByRoleAndIsOnline(com.tucktruck.backend.entity.Role.DRIVER, true);
+            return ResponseEntity.ok(drivers);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     // UPDATE DRIVER STATUS (Online/Offline)
     @PatchMapping("/{driverId}/status")

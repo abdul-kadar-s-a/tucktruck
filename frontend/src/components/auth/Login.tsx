@@ -35,79 +35,30 @@ export function Login({ onLogin, onSignupCustomer, onSignupDriver, onForgotPassw
     setIsLoading(true);
 
     try {
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use Backend API
+      const { api } = await import('../../services/api');
+      const response = await api.login(email, password);
 
-      // Check against localStorage
-      let authenticatedUser: UserType | null = null;
-      let storedUsers: any[] = [];
+      const authenticatedUser: UserType = {
+        id: response.id.toString(), // Ensure string
+        name: response.name || 'User',
+        email: response.email,
+        phone: response.phone || '',
+        type: response.role.toLowerCase() as UserTypeEnum,
+        // Add default/missing fields
+        profilePhoto: `https://ui-avatars.com/api/?name=${response.name || 'User'}&background=random`,
+        address: '',
+        status: response.role === 'DRIVER' ? 'offline' : undefined,
+        approved: true
+      };
 
-      try {
-        if (userType === 'customer') {
-          storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-        } else if (userType === 'driver') {
-          storedUsers = JSON.parse(localStorage.getItem('drivers') || '[]');
-        } else if (userType === 'admin') {
-          // Default admin if none exists
-          const defaultAdmin = {
-            id: 'admin-1',
-            name: 'Super Admin',
-            email: 'admin@tucktruck.com',
-            phone: '1234567890',
-            type: 'admin' as UserTypeEnum,
-            password: 'password123'
-          };
-          storedUsers = JSON.parse(localStorage.getItem('admins') || '[]');
-          if (storedUsers.length === 0 && email === 'admin@tucktruck.com' && (password === 'admin' || password === 'password123')) {
-            authenticatedUser = defaultAdmin;
-          }
-        }
-      } catch (storageError) {
-        console.error('Storage access error:', storageError);
-        setError('Error accessing stored data. Please clear cookies/storage and try again.');
-        setIsLoading(false);
-        return;
-      }
+      // Store in localStorage for persistence (mock session)
+      localStorage.setItem('currentUser', JSON.stringify(authenticatedUser));
 
-      // Ensure storedUsers is an array
-      if (!Array.isArray(storedUsers)) {
-        console.warn('Stored users data is corrupted (not an array). Resetting to empty list.');
-        storedUsers = [];
-      }
-
-      if (!authenticatedUser) {
-        const foundUser = storedUsers.find(u => u.email === email && u.password === password);
-        if (foundUser) {
-          authenticatedUser = foundUser;
-        }
-      }
-
-      if (authenticatedUser) {
-        // Store current session
-        try {
-          localStorage.setItem('currentUser', JSON.stringify(authenticatedUser));
-        } catch (e: any) {
-          if (e.name === 'QuotaExceededError' || e.code === 22) {
-            console.warn('Storage full, saving lite session without images');
-            // Create a lite version without large images for session storage
-            // The in-memory user still has images so the current session works fine
-            const { profilePhoto, vehicleImage, ...liteUser } = authenticatedUser as any;
-            try {
-              localStorage.setItem('currentUser', JSON.stringify(liteUser));
-            } catch (retryError) {
-              throw new Error('Storage completely full. Please use "Clear All App Data" button.');
-            }
-          } else {
-            throw e;
-          }
-        }
-        onLogin(authenticatedUser);
-      } else {
-        setError('Invalid email or password');
-      }
+      onLogin(authenticatedUser);
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(`Login failed: ${err.message || 'Unknown error'}`);
+      setError(`Login failed: ${err.message || 'Invalid credentials'}`);
     } finally {
       setIsLoading(false);
     }

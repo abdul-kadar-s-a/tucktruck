@@ -12,6 +12,8 @@ public class AuthResponse {
     private String token; // For future JWT usage, currently maybe just userID or dummy
     private String email;
     private Role role;
+    private String name;
+    private String phone;
     private Long id;
     private String message;
 }

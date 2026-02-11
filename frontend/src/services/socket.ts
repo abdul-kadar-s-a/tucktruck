@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 
 // Backend server URL - update this when you have a backend running
-const SOCKET_URL = 'http://localhost:8080';
+const SOCKET_URL = 'http://localhost:3001';
 
 // Create socket instance with configuration
 const socket: Socket = io(SOCKET_URL, {

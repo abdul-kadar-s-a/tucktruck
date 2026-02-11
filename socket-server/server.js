@@ -127,7 +127,7 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(5000, () => {
-    console.log("🚀 TuckTruck Socket.IO Server Running on port 5000");
+server.listen(3001, () => {
+    console.log("🚀 TuckTruck Socket.IO Server Running on port 3001");
     console.log("📡 Waiting for connections...");
 });

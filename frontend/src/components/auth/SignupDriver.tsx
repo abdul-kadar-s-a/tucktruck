@@ -66,7 +66,6 @@ export function SignupDriver({ onSignup, onBack }: SignupDriverProps) {
     e.preventDefault();
 
     if (step === 1) {
-      // Validate passwords match
       if (formData.password !== formData.confirmPassword) {
         alert('Passwords do not match!');
         return;
@@ -82,61 +81,32 @@ export function SignupDriver({ onSignup, onBack }: SignupDriverProps) {
     setIsLoading(true);
 
     try {
-      // Simulate network delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      const newUser: User = {
-        id: 'DR' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+      const driverData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        type: 'driver',
-        profilePhoto: profilePhoto || undefined,
+        password: formData.password,
         address: formData.address,
-        status: 'offline', // Start as offline, driver can toggle online
-        approved: true, // Auto-approve for demo (in production, admin would approve)
-        rating: 5.0,
-        trips: 0,
-        zone: 'Unassigned',
-      };
-
-      // Create complete driver data object with all fields
-      const driverData = {
-        ...newUser,
-        password: formData.password, // CRITICAL: Include password for login
+        role: 'DRIVER',
         vehicleType: formData.vehicleType,
-        vehicleNo: formData.vehicleNo,
-        vehicle: formData.vehicleType, // Add 'vehicle' field for consistency with other components
+        vehicleNumber: formData.vehicleNo,
         vehicleCapacity: formData.vehicleCapacity,
-        vehicleImage: vehiclePhoto || undefined,
-        licenseNo: formData.licenseNo,
+        licenseNumber: formData.licenseNo,
         bankAccount: formData.bankAccount,
         bankIFSC: formData.bankIFSC,
         alternateContact: formData.alternateContact,
         bloodGroup: formData.bloodGroup,
-        emergencyContacts: emergencyContacts.filter(c => c.trim() !== ''),
+        isOnline: false
       };
 
-      // Save to localStorage
-      const existingDrivers = JSON.parse(localStorage.getItem('drivers') || '[]');
+      const { api } = await import('../../services/api');
+      await api.signup(driverData);
 
-      // Check if email already exists
-      const emailExists = existingDrivers.some((d: any) => d.email === formData.email);
-      if (emailExists) {
-        alert('Email already registered! Please use a different email or login.');
-        setIsLoading(false);
-        return;
-      }
-
-      localStorage.setItem('drivers', JSON.stringify([...existingDrivers, driverData]));
-
-      alert('Account created successfully');
-
-      // Navigate back to login page instead of auto-login
+      alert('Account created successfully! Please login.');
       onBack();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
-      alert('Failed to create account. Please try again.');
+      alert(`Failed to create account: ${error.message || 'Please try again.'}`);
     } finally {
       setIsLoading(false);
     }

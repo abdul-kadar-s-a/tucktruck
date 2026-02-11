@@ -26,7 +26,8 @@ public class AuthController {
             AuthResponse response = userService.register(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new AuthResponse(null, null, null, null, e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(null, null, null, null, null, null, e.getMessage()));
         }
     }
 
@@ -37,7 +38,8 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             // In a better design, return UNAUTHORIZED status
-            return ResponseEntity.status(401).body(new AuthResponse(null, null, null, null, e.getMessage()));
+            return ResponseEntity.status(401)
+                    .body(new AuthResponse(null, null, null, null, null, null, e.getMessage()));
         }
     }
 
@@ -49,7 +51,8 @@ public class AuthController {
             AuthResponse response = userService.register(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new AuthResponse(null, null, null, null, e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(null, null, null, null, null, null, e.getMessage()));
         }
     }
 
@@ -60,7 +63,8 @@ public class AuthController {
             AuthResponse response = userService.register(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new AuthResponse(null, null, null, null, e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(null, null, null, null, null, null, e.getMessage()));
         }
     }
 }

@@ -43,7 +43,8 @@ public class UserService {
 
         userRepository.save(user);
 
-        return new AuthResponse("dummy-token", user.getEmail(), user.getRole(), user.getId(),
+        return new AuthResponse("dummy-token", user.getEmail(), user.getRole(), user.getName(), user.getPhone(),
+                user.getId(),
                 "User registered successfully");
     }
 
@@ -53,7 +54,8 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                return new AuthResponse("dummy-token", user.getEmail(), user.getRole(), user.getId(),
+                return new AuthResponse("dummy-token", user.getEmail(), user.getRole(), user.getName(), user.getPhone(),
+                        user.getId(),
                         "Login successful");
             } else {
                 throw new RuntimeException("Invalid password");
